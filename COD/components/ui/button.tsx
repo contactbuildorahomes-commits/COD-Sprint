@@ -1,13 +1,16 @@
 import * as React from "react";
 import clsx from "clsx";
 
-type ButtonProps<T extends React.ElementType = "button"> = {
+type ButtonOwnProps = {
   asChild?: boolean;
   variant?: "default" | "outline";
   size?: "default" | "sm" | "lg";
   className?: string;
   children: React.ReactNode;
-} & React.ComponentPropsWithoutRef<T>;
+};
+
+type ButtonProps<T extends React.ElementType> = ButtonOwnProps &
+  Omit<React.ComponentPropsWithoutRef<T>, keyof ButtonOwnProps>;
 
 export function Button<T extends React.ElementType = "button">({
   asChild = false,
@@ -35,10 +38,16 @@ export function Button<T extends React.ElementType = "button">({
   const classes = clsx(base, variants[variant], sizes[size], className);
 
   if (asChild && React.isValidElement(children)) {
-    return React.cloneElement(children as React.ReactElement<any>, {
-      className: clsx((children as any).props?.className, classes),
-      ...props,
-    });
+    return React.cloneElement(
+      children as React.ReactElement<React.HTMLAttributes<HTMLElement>>,
+      {
+        className: clsx(
+          (children.props as React.HTMLAttributes<HTMLElement>)?.className,
+          classes
+        ),
+        ...props,
+      }
+    );
   }
 
   return (
