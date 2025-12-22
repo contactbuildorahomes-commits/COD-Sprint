@@ -20,12 +20,19 @@ export function Button({ asChild, variant = "default", size = "default", classNa
   }
   const classes = clsx(base, variants[variant], sizes[size], className)
 
-  if (asChild && React.isValidElement(children)) {
-    return React.cloneElement(children, {
-      className: clsx((children as any).props?.className, classes),
+ if (asChild && React.isValidElement(children)) {
+  return React.cloneElement(
+    children as React.ReactElement<any>,
+    {
+      className: clsx(
+        (children as any).props?.className,
+        classes
+      ),
       ...props,
-    })
-  }
+    }
+  )
+}
+
 
   return (
     <button className={classes} {...props}>
